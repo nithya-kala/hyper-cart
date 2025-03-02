@@ -1,6 +1,10 @@
 # HyperCart 🐟
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnithya-kala%2Fhyper-cart&env=NEXT_PUBLIC_FIREBASE_API_KEY,NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,NEXT_PUBLIC_FIREBASE_PROJECT_ID,NEXT_PUBLIC_FIREBASE_APPID,FIREBASE_PRIVATE_KEY,FIREBASE_CLIENT_EMAIL&project-name=hyper-cart&repository-name=hyper-cart)
+
 ### Basic HyperCard built with Next.js, shadcn/ui, Tailwind and Firebase on Vercel!
+
+See HyperCart in action with the live demo: https://vercel.com/nithyas-projects-6a45b31c
 
 > Using Next.js app router!
 
