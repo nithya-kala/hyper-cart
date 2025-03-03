@@ -1,26 +1,25 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import AddProductForm from "@/components/add-product-form";
+import { useUser } from "reactfire";
 
 export default function ProductForm() {
   const categories = ["All", "Electronics", "Clothing", "Accessories"];
-  const [product, setProduct] = useState({
-    name: "",
-    price: "",
-    category: categories[0],
-    stock: "",
-    imageURL: "",
-  });
-
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { status, data: user } = useUser();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!user) return router.push("/login");
+  }, [user, status, router]);
 
   const onSubmit = async (values: any) => {
     setLoading(true);
-
+    if (!user) return console.error("User not logged in");
     try {
       const formData = new FormData();
       formData.append("name", values.name);
@@ -28,10 +27,14 @@ export default function ProductForm() {
       formData.append("category", values.category);
       formData.append("stock", values.stockAvailability);
       formData.append("imageUrl", values.imageUrl);
+      const token = await user.getIdToken();
 
       // Send product data to API
       const res = await fetch("/api/products", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 

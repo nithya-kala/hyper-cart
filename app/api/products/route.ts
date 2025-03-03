@@ -1,26 +1,39 @@
-""
+("");
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebaseAdmin";
-import { storage } from "@/components/firebase-providers";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { authMiddleware } from "@/lib/authMiddleware";
 
-// GET /api/products - Fetch all products
+/**
+ * ✅ GET: /api/products - Fetch all products
+ */
 export async function GET() {
   try {
     console.log("📦 Fetching products from Firestore...");
     const snapshot = await db.collection("products").get();
-    
-    const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    const products = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
     return NextResponse.json(products);
   } catch (error) {
     console.error("❌ Error fetching products:", error);
-    return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch products" },
+      { status: 500 }
+    );
   }
 }
 
-// POST /api/products - Add a new product with image
+/**
+ * ✅ POST /api/products - Add a new product with image (Authenticated)
+ */
 export async function POST(req: Request) {
   try {
+    // ✅ Authenticate request using middleware
+    const authResult = await authMiddleware(req);
+    if (authResult instanceof NextResponse) return authResult; // If middleware returns an error, stop execution
+
     const formData = await req.formData();
     const imageUrl = formData.get("imageUrl") as File;
     const name = formData.get("name") as string;
@@ -39,8 +52,15 @@ export async function POST(req: Request) {
       createdAt: new Date(),
     });
 
-    return NextResponse.json({ id: docRef.id, message: "Product added successfully!" }, { status: 201 });
+    return NextResponse.json(
+      { id: docRef.id, message: "Product added successfully!" },
+      { status: 201 }
+    );
   } catch (error) {
-    return NextResponse.json({ error: "Failed to add product" }, { status: 500 });
+    console.log(error);
+    return NextResponse.json(
+      { error: "Failed to add product" },
+      { status: 500 }
+    );
   }
 }

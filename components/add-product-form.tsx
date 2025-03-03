@@ -72,7 +72,13 @@ export default function AddProductForm(props: MyProps) {
   }
 
   const handleImageUrlChange = (url: string) => {
-    if (url && url.match(/^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))$/i)) {
+    const uri = URL.parse(url);
+
+    if (
+      uri?.pathname &&
+      uri.protocol === "https:" &&
+      uri?.pathname.match(/(png|jpg|jpeg|gif|webp)$/i)
+    ) {
       setImagePreview(url);
     } else {
       setImagePreview(null);

@@ -1,11 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useUser } from "reactfire";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 
 interface Order {
   id: string;
@@ -21,16 +27,13 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { data: user } = useUser();
-
-  console.log("User: ", user)
+  const { status, data: user } = useUser();
 
   useEffect(() => {
-    
-    const fetchOrders = async () => {   
-      try {    
-        // await new Promise(resolve => setTimeout(resolve, 5000));
-
+    if (status === "loading") return;
+    if (!user) setLoading(false);
+    const fetchOrders = async () => {
+      try {
         const token = await user?.getIdToken();
         const res = await fetch("/api/orders", {
           headers: { Authorization: `Bearer ${token}` },
@@ -48,7 +51,7 @@ export default function OrdersPage() {
     };
 
     if (user) {
-        fetchOrders();
+      fetchOrders();
     }
   }, [user]);
 
@@ -56,11 +59,11 @@ export default function OrdersPage() {
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-semibold mb-4">Orders</h1>
 
-      {loading && <p>Loading orders or Please login...</p>}
-      {/* {!user && <p> User Not found</p>} */}
+      {loading && <p>Loading orders...</p>}
+      {!user && <p> Please login to view your orders</p>}
       {error && <p className="text-red-500">{error}</p>}
 
-      {!loading && !error && (
+      {!loading && !error && user && (
         <Card className="p-4">
           <Table>
             <TableHeader>
@@ -79,13 +82,21 @@ export default function OrdersPage() {
                   <TableCell>{order.userEmail}</TableCell>
                   <TableCell>
                     {order.items.map((item) => (
-                      <p key={item.name}>
-                        {item.name}
-                      </p>
+                      <p key={item.name}>{item.name}</p>
                     ))}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={getStatusVariant(order.status) as "secondary" | "default" | "outline" | "destructive"}>{order.status}</Badge>
+                    <Badge
+                      variant={
+                        getStatusVariant(order.status) as
+                          | "secondary"
+                          | "default"
+                          | "outline"
+                          | "destructive"
+                      }
+                    >
+                      {order.status}
+                    </Badge>
                   </TableCell>
                   <TableCell>{order.address}</TableCell>
                 </TableRow>
