@@ -72,7 +72,7 @@ export default function AddProductForm(props: MyProps) {
   }
 
   const handleImageUrlChange = (url: string) => {
-    const uri = URL.parse(url);
+    const uri = new URL(url);
 
     if (
       uri?.pathname &&
