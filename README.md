@@ -8,7 +8,7 @@ HyperCart is a e-commerce application built using Next.js, shadcn/ui, Tailwind C
 
 - **Vercel:** Cloud platform for hosting and automated deployments.
 - **Next.js:** React framework for building server-rendered web apps **using the new app router**.
-- **Firebase:** Authentication and real-time database (Firestore).
+- **Firebase:** Authentication with google and real-time database (Firestore).
 - **Shadcn/ui and Tailwind CSS:** UI components and utility-first CSS framework.
 - **Zustand:** State management for handling app data.
 
